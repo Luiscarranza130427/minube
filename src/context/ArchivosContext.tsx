@@ -106,6 +106,12 @@ export const ArchivosProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           });
 
         if (storageError) {
+          const msg = storageError.message.toLowerCase();
+          if (msg.includes('row-level security') || msg.includes('policy') || msg.includes('violates')) {
+            throw new Error(
+              'Permiso denegado por RLS en Supabase Storage (bucket "archivos-personales"). Ejecuta el script supabase_storage_policies.sql en tu SQL Editor de Supabase.'
+            );
+          }
           throw new Error(`Error en Supabase Storage: ${storageError.message}`);
         }
 
