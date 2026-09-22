@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Plus, CloudOff, Inbox } from 'lucide-react';
 import { useArchivos } from '../hooks/useArchivos';
-import { clasificarArchivo } from '../utils/formatters';
+import { clasificarArchivo, exportarInventarioCSV } from '../utils/formatters';
 import {
   confirmarEliminacionArchivo,
   mostrarToastExito,
@@ -12,20 +12,27 @@ import { BuscadorArchivos } from '../components/archivos/BuscadorArchivos';
 import { TablaArchivos } from '../components/archivos/TablaArchivos';
 import { TarjetaArchivo } from '../components/archivos/TarjetaArchivo';
 import { ModalSubirArchivo } from '../components/archivos/ModalSubirArchivo';
+import { ModalVistaPrevia } from '../components/archivos/ModalVistaPrevia';
+import { ModalRenombrarArchivo } from '../components/archivos/ModalRenombrarArchivo';
 import { Button } from '../components/ui/Button';
 import { Skeleton } from '../components/ui/Skeleton';
-import type { Archivo, CategoriaFiltro } from '../types';
+import type { Archivo, CategoriaFiltro, OrdenFiltro } from '../types';
 
 export const Archivos: React.FC = () => {
-  const { archivos, cargando, descargarArchivo, eliminarArchivo } = useArchivos();
+  const { archivos, cargando, descargarArchivo, eliminarArchivo, obtenerUrlPublica } = useArchivos();
 
   const [busqueda, setBusqueda] = useState<string>('');
   const [filtroActivo, setFiltroActivo] = useState<CategoriaFiltro>('todos');
+  const [ordenActivo, setOrdenActivo] = useState<OrdenFiltro>('recientes');
   const [modalSubirAbierto, setModalSubirAbierto] = useState<boolean>(false);
 
-  // Filtrado reactivo en tiempo real
+  // Estados para vistas previas y renombrado
+  const [archivoVistaPrevia, setArchivoVistaPrevia] = useState<Archivo | null>(null);
+  const [archivoRenombrar, setArchivoRenombrar] = useState<Archivo | null>(null);
+
+  // Filtrado y ordenación reactiva en tiempo real
   const archivosFiltrados = useMemo(() => {
-    return archivos.filter((archivo) => {
+    const resultado = archivos.filter((archivo) => {
       // Filtro por categoría
       if (filtroActivo !== 'todos') {
         const categoria = clasificarArchivo(archivo.extension, archivo.tipo_archivo);
@@ -43,7 +50,27 @@ export const Archivos: React.FC = () => {
 
       return true;
     });
-  }, [archivos, busqueda, filtroActivo]);
+
+    // Ordenamiento
+    return resultado.sort((a, b) => {
+      switch (ordenActivo) {
+        case 'recientes':
+          return new Date(b.fecha_subida).getTime() - new Date(a.fecha_subida).getTime();
+        case 'antiguos':
+          return new Date(a.fecha_subida).getTime() - new Date(b.fecha_subida).getTime();
+        case 'tamano_desc':
+          return (b.tamano_bytes || 0) - (a.tamano_bytes || 0);
+        case 'tamano_asc':
+          return (a.tamano_bytes || 0) - (b.tamano_bytes || 0);
+        case 'nombre_asc':
+          return a.nombre_archivo.localeCompare(b.nombre_archivo);
+        case 'nombre_desc':
+          return b.nombre_archivo.localeCompare(a.nombre_archivo);
+        default:
+          return 0;
+      }
+    });
+  }, [archivos, busqueda, filtroActivo, ordenActivo]);
 
   const handleSolicitarEliminar = async (archivo: Archivo) => {
     const confirmado = await confirmarEliminacionArchivo(archivo.nombre_archivo);
@@ -62,6 +89,29 @@ export const Archivos: React.FC = () => {
     await descargarArchivo(archivo);
   };
 
+  const handleCopiarEnlace = async (archivo: Archivo) => {
+    const url = obtenerUrlPublica(archivo);
+    if (url) {
+      try {
+        await navigator.clipboard.writeText(url);
+        mostrarToastExito('¡Enlace público copiado al portapapeles!');
+      } catch {
+        mostrarToastInfo('No se pudo copiar automáticamente.');
+      }
+    } else {
+      mostrarToastInfo('Disponible en conexión directa a Supabase Storage.');
+    }
+  };
+
+  const handleExportarCSV = () => {
+    if (archivosFiltrados.length === 0) {
+      mostrarToastInfo('No hay archivos para exportar con los filtros actuales.');
+      return;
+    }
+    exportarInventarioCSV(archivosFiltrados);
+    mostrarToastExito(`Se exportaron ${archivosFiltrados.length} archivos a CSV.`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Cabecera de la sección */}
@@ -71,7 +121,7 @@ export const Archivos: React.FC = () => {
             Mis archivos
           </h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            Administra los archivos almacenados en tu nube.
+            Administra, previsualiza y comparte los archivos almacenados en tu nube.
           </p>
         </div>
 
@@ -82,16 +132,19 @@ export const Archivos: React.FC = () => {
           icono={<Plus className="w-4 h-4" />}
           className="shadow-md shadow-sky-500/20 shrink-0"
         >
-          + Subir archivo
+          Subir archivos
         </Button>
       </div>
 
-      {/* Barra de búsqueda y selector de filtros */}
+      {/* Barra de búsqueda, selector de filtros y orden */}
       <BuscadorArchivos
         busqueda={busqueda}
         alCambiarBusqueda={setBusqueda}
         filtroActivo={filtroActivo}
         alCambiarFiltro={setFiltroActivo}
+        ordenActivo={ordenActivo}
+        alCambiarOrden={setOrdenActivo}
+        alExportarCSV={handleExportarCSV}
       />
 
       {/* Estados de carga: Skeletons */}
@@ -121,7 +174,7 @@ export const Archivos: React.FC = () => {
             icono={<Plus className="w-4 h-4" />}
             className="shadow-sm"
           >
-            Subir mi primer archivo
+            Subir mis primeros archivos
           </Button>
         </div>
       ) : archivosFiltrados.length === 0 ? (
@@ -162,6 +215,9 @@ export const Archivos: React.FC = () => {
               archivos={archivosFiltrados}
               alDescargar={handleDescargar}
               alSolicitarEliminar={handleSolicitarEliminar}
+              alVerVistaPrevia={(arch) => setArchivoVistaPrevia(arch)}
+              alRenombrar={(arch) => setArchivoRenombrar(arch)}
+              alCopiarEnlace={handleCopiarEnlace}
             />
           </div>
 
@@ -173,6 +229,9 @@ export const Archivos: React.FC = () => {
                 archivo={archivo}
                 alDescargar={handleDescargar}
                 alSolicitarEliminar={handleSolicitarEliminar}
+                alVerVistaPrevia={(arch) => setArchivoVistaPrevia(arch)}
+                alRenombrar={(arch) => setArchivoRenombrar(arch)}
+                alCopiarEnlace={handleCopiarEnlace}
               />
             ))}
           </div>
@@ -183,6 +242,19 @@ export const Archivos: React.FC = () => {
       <ModalSubirArchivo
         abierto={modalSubirAbierto}
         alCerrar={() => setModalSubirAbierto(false)}
+      />
+
+      {/* Modal de Vista Previa */}
+      <ModalVistaPrevia
+        archivo={archivoVistaPrevia}
+        alCerrar={() => setArchivoVistaPrevia(null)}
+      />
+
+      {/* Modal para Renombrar Archivo */}
+      <ModalRenombrarArchivo
+        archivo={archivoRenombrar}
+        abierto={archivoRenombrar !== null}
+        alCerrar={() => setArchivoRenombrar(null)}
       />
     </div>
   );

@@ -7,6 +7,9 @@ import {
   ArrowRight,
   Download,
   Trash2,
+  Eye,
+  Link2,
+  PieChart,
 } from 'lucide-react';
 import { useArchivos } from '../hooks/useArchivos';
 import { formatearTamano, formatearFecha, formatearFechaRelativa } from '../utils/formatters';
@@ -21,13 +24,15 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { ModalSubirArchivo } from '../components/archivos/ModalSubirArchivo';
+import { ModalVistaPrevia } from '../components/archivos/ModalVistaPrevia';
 import { NavLink } from 'react-router-dom';
 import type { Archivo } from '../types';
 
 export const Inicio: React.FC = () => {
-  const { archivos, estadisticas, descargarArchivo, eliminarArchivo } = useArchivos();
+  const { archivos, estadisticas, descargarArchivo, eliminarArchivo, obtenerUrlPublica } = useArchivos();
 
-  const [modalSubirAbierto, setModalSubirAbierto] = useState(false);
+  const [modalSubirAbierto, setModalSubirAbierto] = useState<boolean>(false);
+  const [archivoVistaPrevia, setArchivoVistaPrevia] = useState<Archivo | null>(null);
 
   // Tomar los últimos 4 archivos recientes
   const archivosRecientes = archivos.slice(0, 4);
@@ -35,6 +40,20 @@ export const Inicio: React.FC = () => {
   const handleDescargar = async (archivo: Archivo) => {
     mostrarToastInfo(`Descargando ${archivo.nombre_archivo}...`);
     await descargarArchivo(archivo);
+  };
+
+  const handleCopiarEnlace = async (archivo: Archivo) => {
+    const url = obtenerUrlPublica(archivo);
+    if (url) {
+      try {
+        await navigator.clipboard.writeText(url);
+        mostrarToastExito('¡Enlace público copiado al portapapeles!');
+      } catch {
+        mostrarToastInfo('No se pudo copiar automáticamente.');
+      }
+    } else {
+      mostrarToastInfo('Disponible en conexión con Supabase Storage.');
+    }
   };
 
   const handleEliminar = async (archivo: Archivo) => {
@@ -72,7 +91,7 @@ export const Inicio: React.FC = () => {
           icono={<Plus className="w-5 h-5 text-sky-600" />}
           className="bg-white text-sky-700 hover:bg-sky-50 shadow-md font-semibold shrink-0"
         >
-          Subir archivo
+          Subir archivos
         </Button>
       </div>
 
@@ -124,6 +143,73 @@ export const Inicio: React.FC = () => {
         </Card>
       </div>
 
+      {/* Desglose visual de almacenamiento por categorías */}
+      {estadisticas.totalArchivos > 0 && (
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
+                <PieChart className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-800">
+                  Distribución de almacenamiento
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Espacio consumido clasificado por tipo de contenido
+                </p>
+              </div>
+            </div>
+            <span className="text-xs font-mono font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
+              {formatearTamano(estadisticas.espacioUtilizadoBytes)} / 500 MB (Cuota Demo)
+            </span>
+          </div>
+
+          {/* Barra segmentada multicolor */}
+          <div className="w-full h-3.5 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
+            {estadisticas.desgloseCategorias.map((cat, i) => {
+              if (cat.bytes === 0) return null;
+              return (
+                <div
+                  key={cat.categoria}
+                  style={{
+                    width: `${cat.porcentaje}%`,
+                    backgroundColor: cat.color,
+                  }}
+                  title={`${cat.categoria}: ${formatearTamano(cat.bytes)} (${cat.porcentaje}%)`}
+                  className={`h-full transition-all duration-300 ${
+                    i === 0 ? 'rounded-l-full' : ''
+                  }`}
+                />
+              );
+            })}
+          </div>
+
+          {/* Leyenda con indicadores */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+            {estadisticas.desgloseCategorias.map((cat) => (
+              <div
+                key={cat.categoria}
+                className="flex items-center gap-2 p-2 rounded-xl bg-slate-50/60 border border-slate-100"
+              >
+                <span
+                  className="w-3 h-3 rounded-full shrink-0 shadow-2xs"
+                  style={{ backgroundColor: cat.color }}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-semibold text-slate-700 truncate">
+                    {cat.categoria}
+                  </p>
+                  <p className="text-[11px] text-slate-400 font-mono">
+                    {formatearTamano(cat.bytes)} ({cat.cantidad})
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Sección Archivos Recientes */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -172,17 +258,21 @@ export const Inicio: React.FC = () => {
                 >
                   <div className="flex items-start gap-3 min-w-0 flex-1">
                     <div
-                      className={`w-11 h-11 rounded-xl ${config.colorFondo} ${config.colorTexto} flex items-center justify-center shrink-0 shadow-2xs`}
+                      onClick={() => setArchivoVistaPrevia(archivo)}
+                      className={`w-11 h-11 rounded-xl ${config.colorFondo} ${config.colorTexto} flex items-center justify-center shrink-0 shadow-2xs cursor-pointer hover:opacity-80 transition-opacity`}
+                      title="Ver vista previa"
                     >
                       <Icono className="w-5 h-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p
-                        className="text-sm font-semibold text-slate-800 truncate"
+                      <button
+                        type="button"
+                        onClick={() => setArchivoVistaPrevia(archivo)}
+                        className="text-sm font-semibold text-slate-800 hover:text-sky-600 transition-colors truncate block text-left w-full cursor-pointer"
                         title={archivo.nombre_archivo}
                       >
                         {archivo.nombre_archivo}
-                      </p>
+                      </button>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant="sky" size="sm">
                           {config.etiquetaTipo}
@@ -198,7 +288,21 @@ export const Inicio: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-0.5 shrink-0">
+                    <button
+                      onClick={() => setArchivoVistaPrevia(archivo)}
+                      className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors cursor-pointer"
+                      title="Vista previa rápida"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleCopiarEnlace(archivo)}
+                      className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+                      title="Copiar enlace"
+                    >
+                      <Link2 className="w-4 h-4" />
+                    </button>
                     <button
                       onClick={() => handleDescargar(archivo)}
                       className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors cursor-pointer"
@@ -225,6 +329,12 @@ export const Inicio: React.FC = () => {
       <ModalSubirArchivo
         abierto={modalSubirAbierto}
         alCerrar={() => setModalSubirAbierto(false)}
+      />
+
+      {/* Modal de Vista Previa */}
+      <ModalVistaPrevia
+        archivo={archivoVistaPrevia}
+        alCerrar={() => setArchivoVistaPrevia(null)}
       />
     </div>
   );

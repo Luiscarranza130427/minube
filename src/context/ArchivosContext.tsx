@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase, estaConfiguradoSupabase, BUCKET_ARCHIVOS } from '../services/supabase';
 import { MOCK_ARCHIVOS } from '../mocks/mockData';
 import { useAuth } from './AuthContext';
-import type { Archivo, EstadisticasArchivos } from '../types';
+import type { Archivo, EstadisticasArchivos, DesgloseCategoria } from '../types';
 
 interface ArchivosContextType {
   archivos: Archivo[];
@@ -10,8 +10,12 @@ interface ArchivosContextType {
   progresoSubida: number;
   subiendo: boolean;
   subirArchivo: (archivoFisico: File, descripcion?: string) => Promise<{ exito: boolean; error?: string }>;
+  subirMultiplesArchivos: (archivosFisicos: File[], descripcion?: string) => Promise<{ exito: boolean; subidos: number; errores?: string[] }>;
   eliminarArchivo: (id: string) => Promise<{ exito: boolean; error?: string }>;
+  renombrarArchivo: (id: string, nuevoNombre: string) => Promise<{ exito: boolean; error?: string }>;
   descargarArchivo: (archivo: Archivo) => Promise<void>;
+  obtenerUrlPublica: (archivo: Archivo) => string;
+  obtenerUrlFirmada: (archivo: Archivo, segundos?: number) => Promise<string | null>;
   estadisticas: EstadisticasArchivos;
   recargarArchivos: () => Promise<void>;
 }
@@ -311,11 +315,154 @@ Fecha de subida: ${archivo.fecha_subida}
     }
   };
 
-  // Cálculo de estadísticas
+  // Renombrar archivo (actualiza nombre_archivo en PostgreSQL)
+  const renombrarArchivo = async (id: string, nuevoNombre: string): Promise<{ exito: boolean; error?: string }> => {
+    const nombreLimpio = nuevoNombre.trim();
+    if (!nombreLimpio) return { exito: false, error: 'El nombre no puede estar vacío' };
+
+    try {
+      if (estaConfiguradoSupabase) {
+        const { error } = await supabase
+          .from('archivos')
+          .update({
+            nombre_archivo: nombreLimpio,
+            fecha_actualizacion: new Date().toISOString(),
+          })
+          .eq('id', id);
+
+        if (error) throw error;
+      }
+
+      const nuevos = archivos.map((a) =>
+        a.id === id
+          ? {
+              ...a,
+              nombre_archivo: nombreLimpio,
+              fecha_actualizacion: new Date().toISOString(),
+            }
+          : a
+      );
+      setArchivos(nuevos);
+      if (!estaConfiguradoSupabase) {
+        localStorage.setItem(CLAVE_LOCAL_STORAGE, JSON.stringify(nuevos));
+      }
+
+      return { exito: true };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al renombrar archivo';
+      return { exito: false, error: msg };
+    }
+  };
+
+  // Subir múltiples archivos en cola
+  const subirMultiplesArchivos = async (
+    archivosFisicos: File[],
+    descripcion?: string
+  ): Promise<{ exito: boolean; subidos: number; errores?: string[] }> => {
+    if (!archivosFisicos || archivosFisicos.length === 0) {
+      return { exito: false, subidos: 0, errores: ['No se seleccionó ningún archivo'] };
+    }
+
+    setSubiendo(true);
+    let subidosContador = 0;
+    const errores: string[] = [];
+
+    for (let i = 0; i < archivosFisicos.length; i++) {
+      const file = archivosFisicos[i];
+      setProgresoSubida(Math.round(((i) / archivosFisicos.length) * 100));
+      const res = await subirArchivo(file, descripcion);
+      if (res.exito) {
+        subidosContador++;
+      } else {
+        errores.push(`${file.name}: ${res.error}`);
+      }
+    }
+
+    setProgresoSubida(100);
+    setTimeout(() => {
+      setSubiendo(false);
+      setProgresoSubida(0);
+    }, 400);
+
+    return {
+      exito: subidosContador > 0,
+      subidos: subidosContador,
+      errores: errores.length > 0 ? errores : undefined,
+    };
+  };
+
+  // Obtener URL pública directa para previsualización o descarga
+  const obtenerUrlPublica = (archivo: Archivo): string => {
+    if (estaConfiguradoSupabase) {
+      const { data } = supabase.storage
+        .from(BUCKET_ARCHIVOS)
+        .getPublicUrl(archivo.nombre_almacenamiento);
+      return data?.publicUrl || '';
+    }
+    return '';
+  };
+
+  // Obtener enlace firmado temporal con tiempo de expiración
+  const obtenerUrlFirmada = async (archivo: Archivo, segundos: number = 60): Promise<string | null> => {
+    try {
+      if (estaConfiguradoSupabase) {
+        const { data, error } = await supabase.storage
+          .from(BUCKET_ARCHIVOS)
+          .createSignedUrl(archivo.nombre_almacenamiento, segundos);
+
+        if (error) throw error;
+        return data?.signedUrl || null;
+      }
+      return null;
+    } catch (err) {
+      console.error('Error al generar enlace firmado:', err);
+      return null;
+    }
+  };
+
+  // Cálculo de estadísticas con desglose por categoría
+  const totalEspacio = archivos.reduce((total, arch) => total + (arch.tamano_bytes || 0), 0);
+  
+  const calcularDesglose = (): DesgloseCategoria[] => {
+    const totalBytesRef = totalEspacio > 0 ? totalEspacio : 1;
+    const categorias = {
+      documentos: { bytes: 0, cantidad: 0, color: '#0ea5e9', nombre: 'Documentos' },
+      imagenes: { bytes: 0, cantidad: 0, color: '#10b981', nombre: 'Imágenes' },
+      texto: { bytes: 0, cantidad: 0, color: '#6366f1', nombre: 'Texto y Código' },
+      otros: { bytes: 0, cantidad: 0, color: '#f59e0b', nombre: 'Otros' },
+    };
+
+    archivos.forEach((arch) => {
+      const ext = (arch.extension || '').toLowerCase();
+      if (['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'].includes(ext)) {
+        categorias.documentos.bytes += arch.tamano_bytes || 0;
+        categorias.documentos.cantidad++;
+      } else if (['.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif'].includes(ext)) {
+        categorias.imagenes.bytes += arch.tamano_bytes || 0;
+        categorias.imagenes.cantidad++;
+      } else if (['.txt', '.md', '.json', '.js', '.ts', '.html', '.css', '.sql'].includes(ext)) {
+        categorias.texto.bytes += arch.tamano_bytes || 0;
+        categorias.texto.cantidad++;
+      } else {
+        categorias.otros.bytes += arch.tamano_bytes || 0;
+        categorias.otros.cantidad++;
+      }
+    });
+
+    return Object.values(categorias).map((c) => ({
+      categoria: c.nombre,
+      bytes: c.bytes,
+      cantidad: c.cantidad,
+      color: c.color,
+      porcentaje: totalEspacio > 0 ? Math.round((c.bytes / totalBytesRef) * 100) : 0,
+    }));
+  };
+
   const estadisticas: EstadisticasArchivos = {
     totalArchivos: archivos.length,
-    espacioUtilizadoBytes: archivos.reduce((total, arch) => total + (arch.tamano_bytes || 0), 0),
+    espacioUtilizadoBytes: totalEspacio,
     ultimaSubida: archivos.length > 0 ? archivos[0].fecha_subida : null,
+    desgloseCategorias: calcularDesglose(),
   };
 
   return (
@@ -326,8 +473,12 @@ Fecha de subida: ${archivo.fecha_subida}
         progresoSubida,
         subiendo,
         subirArchivo,
+        subirMultiplesArchivos,
         eliminarArchivo,
+        renombrarArchivo,
         descargarArchivo,
+        obtenerUrlPublica,
+        obtenerUrlFirmada,
         estadisticas,
         recargarArchivos: cargarArchivos,
       }}

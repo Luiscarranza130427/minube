@@ -1,5 +1,5 @@
 import React from 'react';
-import { Download, Trash2, Calendar, HardDrive } from 'lucide-react';
+import { Download, Trash2, Calendar, HardDrive, Eye, Edit3, Link2 } from 'lucide-react';
 import { obtenerConfiguracionArchivo } from '../../utils/fileIcons';
 import { formatearTamano, formatearFecha } from '../../utils/formatters';
 import { Badge } from '../ui/Badge';
@@ -9,12 +9,18 @@ interface TarjetaArchivoProps {
   archivo: Archivo;
   alDescargar: (archivo: Archivo) => void;
   alSolicitarEliminar: (archivo: Archivo) => void;
+  alVerVistaPrevia?: (archivo: Archivo) => void;
+  alRenombrar?: (archivo: Archivo) => void;
+  alCopiarEnlace?: (archivo: Archivo) => void;
 }
 
 export const TarjetaArchivo: React.FC<TarjetaArchivoProps> = ({
   archivo,
   alDescargar,
   alSolicitarEliminar,
+  alVerVistaPrevia,
+  alRenombrar,
+  alCopiarEnlace,
 }) => {
   const config = obtenerConfiguracionArchivo(archivo.extension, archivo.tipo_archivo);
   const Icono = config.icono;
@@ -24,19 +30,23 @@ export const TarjetaArchivo: React.FC<TarjetaArchivoProps> = ({
       <div className="flex items-start gap-3">
         {/* Icono del archivo */}
         <div
-          className={`w-11 h-11 rounded-xl ${config.colorFondo} ${config.colorTexto} flex items-center justify-center shrink-0 shadow-2xs`}
+          onClick={() => alVerVistaPrevia?.(archivo)}
+          className={`w-11 h-11 rounded-xl ${config.colorFondo} ${config.colorTexto} flex items-center justify-center shrink-0 shadow-2xs cursor-pointer hover:opacity-80 transition-opacity`}
+          title="Ver vista previa"
         >
           <Icono className="w-5 h-5" />
         </div>
 
         {/* Nombre y badge de tipo */}
         <div className="min-w-0 flex-1">
-          <p
-            className="text-sm font-semibold text-slate-800 truncate"
+          <button
+            type="button"
+            onClick={() => alVerVistaPrevia?.(archivo)}
+            className="text-sm font-semibold text-slate-800 hover:text-sky-600 transition-colors truncate block text-left w-full cursor-pointer"
             title={archivo.nombre_archivo}
           >
             {archivo.nombre_archivo}
-          </p>
+          </button>
           <div className="flex items-center gap-2 mt-1">
             <Badge variant="sky" size="sm">
               {config.etiquetaTipo}
@@ -63,17 +73,48 @@ export const TarjetaArchivo: React.FC<TarjetaArchivoProps> = ({
           {formatearFecha(archivo.fecha_subida)}
         </span>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
+          {alVerVistaPrevia && (
+            <button
+              onClick={() => alVerVistaPrevia(archivo)}
+              className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors cursor-pointer"
+              title="Vista previa"
+            >
+              <Eye className="w-4 h-4" />
+            </button>
+          )}
+
+          {alRenombrar && (
+            <button
+              onClick={() => alRenombrar(archivo)}
+              className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+              title="Renombrar archivo"
+            >
+              <Edit3 className="w-4 h-4" />
+            </button>
+          )}
+
+          {alCopiarEnlace && (
+            <button
+              onClick={() => alCopiarEnlace(archivo)}
+              className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+              title="Copiar enlace directo"
+            >
+              <Link2 className="w-4 h-4" />
+            </button>
+          )}
+
           <button
             onClick={() => alDescargar(archivo)}
-            className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors cursor-pointer"
             title="Descargar archivo"
           >
             <Download className="w-4 h-4" />
           </button>
+
           <button
             onClick={() => alSolicitarEliminar(archivo)}
-            className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
             title="Eliminar archivo"
           >
             <Trash2 className="w-4 h-4" />
