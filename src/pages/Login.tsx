@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Cloud, Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
+import logoNubox from '../assets/nubox-logo.png';
 import { useAuth } from '../hooks/useAuth';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
@@ -57,17 +58,23 @@ export const Login: React.FC = () => {
       {/* Contenedor central */}
       <div className="w-full max-w-md bg-white rounded-3xl border border-slate-200/80 shadow-xl shadow-slate-200/50 p-6 sm:p-8 space-y-6">
         {/* Cabecera / Identidad visual */}
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-sky-500 to-sky-400 text-white flex items-center justify-center shadow-md shadow-sky-500/25">
-            <Cloud className="w-8 h-8" />
+        <div className="text-center space-y-3">
+          <div className="flex items-center justify-center">
+            <img
+              src={logoNubox}
+              alt="Logo Nubox"
+              className="h-16 w-auto max-w-[200px] object-contain drop-shadow-sm"
+            />
           </div>
 
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
-            Bienvenido a Mi Nube
-          </h1>
-          <p className="text-sm text-slate-500">
-            Accede a tus archivos almacenados en la nube.
-          </p>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+              Bienvenido a Nubox
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">
+              Accede a tus archivos almacenados en la nube.
+            </p>
+          </div>
         </div>
 
         {/* Mensaje de error general si falló la autenticación */}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import logoNubox from '../../assets/nubox-logo.png';
 import {
-  Cloud,
   LayoutDashboard,
   FolderClosed,
   User,
@@ -48,18 +48,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ abiertoMovil, alCerrarMovil })
 
   const contenidoSidebar = (
     <div className="flex flex-col h-full bg-white border-r border-slate-200/80 w-64 select-none">
-      {/* Logotipo y Título de Mi Nube */}
+      {/* Logotipo y Título de Nubox */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-sky-400 flex items-center justify-center text-white shadow-sm shadow-sky-500/30">
-            <Cloud className="w-6 h-6" />
-          </div>
+          <img
+            src={logoNubox}
+            alt="Nubox"
+            className="w-10 h-10 object-contain drop-shadow-2xs"
+          />
           <div>
             <h1 className="font-bold text-slate-800 text-lg leading-tight tracking-tight">
-              Mi Nube
+              Nubox
             </h1>
             <span className="text-[11px] font-medium text-sky-600 tracking-wide uppercase">
-              Supabase Cloud
+              Cloud Storage
             </span>
           </div>
         </div>

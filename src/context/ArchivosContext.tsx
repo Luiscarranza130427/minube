@@ -237,7 +237,7 @@ export const ArchivosProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
       } else {
         // Descarga simulada en modo demo generando un archivo de texto descriptivo
-        const contenidoSimulado = `--- ARCHIVO DESCARGADO DE MI NUBE (MODO DEMO ACADÉMICO) ---
+        const contenidoSimulado = `--- ARCHIVO DESCARGADO DE NUBOX (MODO DEMO ACADÉMICO) ---
 Nombre: ${archivo.nombre_archivo}
 Tipo: ${archivo.tipo_archivo}
 Tamaño: ${archivo.tamano_bytes} bytes

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Cloud, User, Mail, Lock, CheckCircle, ArrowRight } from 'lucide-react';
+import logoNubox from '../assets/nubox-logo.png';
+import { User, Mail, Lock, CheckCircle, ArrowRight } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
@@ -79,17 +80,23 @@ export const Registro: React.FC = () => {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 selection:bg-sky-500 selection:text-white">
       <div className="w-full max-w-md bg-white rounded-3xl border border-slate-200/80 shadow-xl shadow-slate-200/50 p-6 sm:p-8 space-y-6">
         {/* Cabecera visual */}
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-sky-500 to-sky-400 text-white flex items-center justify-center shadow-md shadow-sky-500/25">
-            <Cloud className="w-8 h-8" />
+        <div className="text-center space-y-3">
+          <div className="flex items-center justify-center">
+            <img
+              src={logoNubox}
+              alt="Logo Nubox"
+              className="h-16 w-auto max-w-[200px] object-contain drop-shadow-sm"
+            />
           </div>
 
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
-            Crear cuenta en Mi Nube
-          </h1>
-          <p className="text-sm text-slate-500">
-            Regístrate para comenzar a gestionar tus archivos personales.
-          </p>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+              Crear cuenta en Nubox
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">
+              Regístrate para comenzar a gestionar tus archivos personales.
+            </p>
+          </div>
         </div>
 
         {/* Alerta de error general */}
