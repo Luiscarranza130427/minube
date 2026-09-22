@@ -16,187 +16,102 @@
 }
 
 /* ==========================================================================
-   SweetAlert Nubox Design (Limpio, Minimalista y Sin Sombras en Pantalla)
+   SweetAlert 1 - Personalización Moderna Nubox
    ========================================================================== */
 
-/* 1. RESET TOTAL PARA TOASTS: CERO sombras o fondos oscuros en pantalla */
-body.swal2-toast-shown,
-body.swal2-toast-shown .swal2-container,
-body.swal2-toast-shown .swal2-container.swal2-backdrop-show,
-.swal2-container.swal2-toast-shown,
-.swal2-container.swal2-toast-shown.swal2-backdrop-show,
-.swal2-container.swal2-pill-container {
-  background: transparent !important;
-  background-color: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow: none !important;
-  pointer-events: none !important;
-}
-
-/* 2. Posición flotante centrada arriba (Dynamic Island / Apple style) */
-body.swal2-toast-shown .swal2-container.swal2-top,
-.swal2-container.swal2-pill-container {
-  position: fixed !important;
-  top: 20px !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  margin: 0 auto !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: flex-start !important;
-  pointer-events: none !important;
-  z-index: 99999 !important;
-  background: transparent !important;
-  padding: 0 !important;
-}
-
-/* 3. Píldora de toast minimalista y elegante */
-.swal2-popup.swal2-toast.swal2-pill-toast {
-  pointer-events: auto !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  border-radius: 9999px !important;
-  background: #ffffff !important;
-  border: 1px solid rgba(226, 232, 240, 0.95) !important;
-  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.04) !important;
-  padding: 0.5rem 0.95rem !important;
-  margin: 0 auto !important;
-  width: auto !important;
-  min-width: 260px !important;
-  max-width: 90vw !important;
-  overflow: hidden !important;
-}
-
-.swal2-pill-toast .swal2-html-container {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-}
-
-/* Estructura interna horizontal de la píldora */
-.swal-pill-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  white-space: nowrap;
-}
-
-.swal-pill-logo-img {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.swal-pill-sep {
-  width: 1px;
-  height: 14px;
-  background-color: #cbd5e1;
-  flex-shrink: 0;
-}
-
-.swal-pill-text {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #0f172a;
-  flex-grow: 1;
-}
-
-.swal-pill-icon-box {
-  width: 22px;
-  height: 22px;
-  border-radius: 9999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-/* 4. Modales centrados estilo SweetAlert clásico (solo para confirmaciones) */
-body:not(.swal2-toast-shown) .swal2-container.swal2-backdrop-show {
+.swal-overlay {
+  background-color: rgba(15, 23, 42, 0.4) !important;
   backdrop-filter: blur(4px) !important;
   -webkit-backdrop-filter: blur(4px) !important;
-  background: rgba(15, 23, 42, 0.35) !important;
 }
 
-.swal2-popup.swal-classic-modal {
+.swal-modal {
   border-radius: 1.5rem !important;
-  padding: 1.75rem 1.5rem !important;
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+  padding: 2rem 1.75rem !important;
   border: 1px solid #f1f5f9 !important;
-  width: 90% !important;
-  max-width: 420px !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
   font-family: inherit !important;
-  background: #ffffff !important;
+  background-color: #ffffff !important;
+  max-width: 440px !important;
+  width: 90% !important;
 }
 
-.swal-classic-title {
+.swal-title {
   font-size: 1.25rem !important;
   font-weight: 800 !important;
   color: #0f172a !important;
-  margin-top: 0.75rem !important;
+  margin: 0.75rem 0 0.5rem 0 !important;
   letter-spacing: -0.02em !important;
 }
 
-.swal-classic-actions {
-  margin-top: 1.5rem !important;
-  display: flex !important;
-  gap: 0.625rem !important;
-  justify-content: center !important;
-  width: 100% !important;
+.swal-text {
+  font-size: 0.875rem !important;
+  color: #64748b !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
 }
 
-.swal-classic-btn-primary {
+.swal-footer {
+  margin-top: 1.5rem !important;
+  text-align: center !important;
+  padding: 0 !important;
+}
+
+.swal-button-container {
+  margin: 0.25rem 0.5rem !important;
+}
+
+.swal-button {
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  padding: 0.625rem 1.35rem !important;
+  border-radius: 0.75rem !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+.swal-button:not([disabled]):hover {
+  transform: translateY(-1px) !important;
+}
+
+.swal-button--confirm {
   background-color: #0ea5e9 !important;
   color: #ffffff !important;
-  font-weight: 600 !important;
-  font-size: 0.875rem !important;
-  padding: 0.625rem 1.25rem !important;
-  border-radius: 0.75rem !important;
   border: none !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 2px 6px rgba(14, 165, 233, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.35) !important;
 }
 
-.swal-classic-btn-primary:hover {
+.swal-button--confirm:hover {
   background-color: #0284c7 !important;
-  transform: translateY(-1px) !important;
 }
 
-.swal-classic-btn-danger {
+.swal-button--danger {
   background-color: #f43f5e !important;
   color: #ffffff !important;
-  font-weight: 600 !important;
-  font-size: 0.875rem !important;
-  padding: 0.625rem 1.25rem !important;
-  border-radius: 0.75rem !important;
   border: none !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 2px 6px rgba(244, 63, 94, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.35) !important;
 }
 
-.swal-classic-btn-danger:hover {
+.swal-button--danger:hover {
   background-color: #e11d48 !important;
-  transform: translateY(-1px) !important;
 }
 
-.swal-classic-btn-cancel {
+.swal-button--cancel {
   background-color: #f1f5f9 !important;
   color: #475569 !important;
-  font-weight: 600 !important;
-  font-size: 0.875rem !important;
-  padding: 0.625rem 1.25rem !important;
-  border-radius: 0.75rem !important;
   border: 1px solid #e2e8f0 !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
 }
 
-.swal-classic-btn-cancel:hover {
+.swal-button--cancel:hover {
   background-color: #e2e8f0 !important;
   color: #0f172a !important;
+}
+
+.swal-icon--custom {
+  max-width: 68px !important;
+  max-height: 68px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 4px 6px rgba(14, 165, 233, 0.2)) !important;
+  margin-bottom: 0.5rem !important;
 }
