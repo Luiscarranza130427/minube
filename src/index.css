@@ -14,3 +14,106 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+/* ==========================================================================
+   Personalización Ultra-Moderna para SweetAlert2 (Nubox Theme)
+   ========================================================================== */
+
+.swal2-container.swal2-backdrop-show {
+  backdrop-filter: blur(6px) !important;
+  background: rgba(15, 23, 42, 0.4) !important;
+}
+
+.swal2-popup.swal2-popup-nubox {
+  border-radius: 1.5rem !important;
+  padding: 1.75rem !important;
+  border: 1px solid #f1f5f9 !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.18) !important;
+  font-family: inherit !important;
+}
+
+.swal2-title.swal2-title-nubox {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.025em !important;
+  padding-top: 0.5rem !important;
+}
+
+.swal2-actions-nubox {
+  gap: 0.625rem !important;
+  margin-top: 1.5rem !important;
+  width: 100% !important;
+  justify-content: flex-end !important;
+}
+
+.swal2-btn-primary {
+  background-color: #0ea5e9 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  padding: 0.625rem 1.25rem !important;
+  border-radius: 0.75rem !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px 0 rgba(14, 165, 233, 0.3) !important;
+}
+
+.swal2-btn-primary:hover {
+  background-color: #0284c7 !important;
+  transform: translateY(-1px) !important;
+}
+
+.swal2-btn-danger {
+  background-color: #f43f5e !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  padding: 0.625rem 1.25rem !important;
+  border-radius: 0.75rem !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px 0 rgba(244, 63, 94, 0.3) !important;
+}
+
+.swal2-btn-danger:hover {
+  background-color: #e11d48 !important;
+  transform: translateY(-1px) !important;
+}
+
+.swal2-btn-cancel {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  padding: 0.625rem 1.25rem !important;
+  border-radius: 0.75rem !important;
+  border: 1px solid #e2e8f0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.swal2-btn-cancel:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Estilos de Toast flotante en esquina superior */
+.swal2-toast.swal2-toast-nubox {
+  border-radius: 1rem !important;
+  border: 1px solid #f1f5f9 !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1) !important;
+  padding: 0.875rem 1.25rem !important;
+}
+
+.swal2-toast .swal2-title {
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+}
+
+.swal2-toast-progress {
+  background-color: #0ea5e9 !important;
+}

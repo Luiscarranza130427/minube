@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Mail, Calendar, Save, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { formatearFecha, obtenerIniciales } from '../utils/formatters';
+import { mostrarToastExito, mostrarToastError } from '../utils/alertas';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -28,6 +29,7 @@ export const Perfil: React.FC = () => {
 
     if (!nombreCompleto.trim()) {
       setMensajeError('El nombre completo no puede estar vacío.');
+      mostrarToastError('El nombre completo no puede estar vacío.');
       return;
     }
 
@@ -37,9 +39,11 @@ export const Perfil: React.FC = () => {
 
     if (res.exito) {
       setMensajeExito('Nombre actualizado exitosamente.');
+      mostrarToastExito('¡Perfil actualizado con éxito!');
       setTimeout(() => setMensajeExito(null), 4000);
     } else {
       setMensajeError(res.error || 'No se pudieron guardar los cambios.');
+      mostrarToastError(res.error || 'No se pudieron guardar los cambios.');
     }
   };
 

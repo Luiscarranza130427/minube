@@ -2,11 +2,16 @@ import React, { useState, useMemo } from 'react';
 import { Plus, CloudOff, Inbox } from 'lucide-react';
 import { useArchivos } from '../hooks/useArchivos';
 import { clasificarArchivo } from '../utils/formatters';
+import {
+  confirmarEliminacionArchivo,
+  mostrarToastExito,
+  mostrarToastError,
+  mostrarToastInfo,
+} from '../utils/alertas';
 import { BuscadorArchivos } from '../components/archivos/BuscadorArchivos';
 import { TablaArchivos } from '../components/archivos/TablaArchivos';
 import { TarjetaArchivo } from '../components/archivos/TarjetaArchivo';
 import { ModalSubirArchivo } from '../components/archivos/ModalSubirArchivo';
-import { ModalEliminarArchivo } from '../components/archivos/ModalEliminarArchivo';
 import { Button } from '../components/ui/Button';
 import { Skeleton } from '../components/ui/Skeleton';
 import type { Archivo, CategoriaFiltro } from '../types';
@@ -17,8 +22,6 @@ export const Archivos: React.FC = () => {
   const [busqueda, setBusqueda] = useState<string>('');
   const [filtroActivo, setFiltroActivo] = useState<CategoriaFiltro>('todos');
   const [modalSubirAbierto, setModalSubirAbierto] = useState<boolean>(false);
-  const [archivoAEliminar, setArchivoAEliminar] = useState<Archivo | null>(null);
-  const [eliminando, setEliminando] = useState<boolean>(false);
 
   // Filtrado reactivo en tiempo real
   const archivosFiltrados = useMemo(() => {
@@ -42,12 +45,21 @@ export const Archivos: React.FC = () => {
     });
   }, [archivos, busqueda, filtroActivo]);
 
-  const handleConfirmarEliminacion = async () => {
-    if (!archivoAEliminar) return;
-    setEliminando(true);
-    await eliminarArchivo(archivoAEliminar.id);
-    setEliminando(false);
-    setArchivoAEliminar(null);
+  const handleSolicitarEliminar = async (archivo: Archivo) => {
+    const confirmado = await confirmarEliminacionArchivo(archivo.nombre_archivo);
+    if (confirmado) {
+      const res = await eliminarArchivo(archivo.id);
+      if (res.exito) {
+        mostrarToastExito('Archivo eliminado correctamente');
+      } else {
+        mostrarToastError(res.error || 'No se pudo eliminar el archivo');
+      }
+    }
+  };
+
+  const handleDescargar = async (archivo: Archivo) => {
+    mostrarToastInfo(`Descargando ${archivo.nombre_archivo}...`);
+    await descargarArchivo(archivo);
   };
 
   return (
@@ -148,8 +160,8 @@ export const Archivos: React.FC = () => {
           <div className="hidden md:block">
             <TablaArchivos
               archivos={archivosFiltrados}
-              alDescargar={descargarArchivo}
-              alSolicitarEliminar={setArchivoAEliminar}
+              alDescargar={handleDescargar}
+              alSolicitarEliminar={handleSolicitarEliminar}
             />
           </div>
 
@@ -159,8 +171,8 @@ export const Archivos: React.FC = () => {
               <TarjetaArchivo
                 key={archivo.id}
                 archivo={archivo}
-                alDescargar={descargarArchivo}
-                alSolicitarEliminar={setArchivoAEliminar}
+                alDescargar={handleDescargar}
+                alSolicitarEliminar={handleSolicitarEliminar}
               />
             ))}
           </div>
@@ -171,14 +183,6 @@ export const Archivos: React.FC = () => {
       <ModalSubirArchivo
         abierto={modalSubirAbierto}
         alCerrar={() => setModalSubirAbierto(false)}
-      />
-
-      {/* Modal de confirmación para eliminar */}
-      <ModalEliminarArchivo
-        archivo={archivoAEliminar}
-        alCerrar={() => setArchivoAEliminar(null)}
-        alConfirmar={handleConfirmarEliminacion}
-        eliminando={eliminando}
       />
     </div>
   );

@@ -11,11 +11,16 @@ import {
 import { useArchivos } from '../hooks/useArchivos';
 import { formatearTamano, formatearFecha, formatearFechaRelativa } from '../utils/formatters';
 import { obtenerConfiguracionArchivo } from '../utils/fileIcons';
+import {
+  confirmarEliminacionArchivo,
+  mostrarToastExito,
+  mostrarToastError,
+  mostrarToastInfo,
+} from '../utils/alertas';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { ModalSubirArchivo } from '../components/archivos/ModalSubirArchivo';
-import { ModalEliminarArchivo } from '../components/archivos/ModalEliminarArchivo';
 import { NavLink } from 'react-router-dom';
 import type { Archivo } from '../types';
 
@@ -23,18 +28,25 @@ export const Inicio: React.FC = () => {
   const { archivos, estadisticas, descargarArchivo, eliminarArchivo } = useArchivos();
 
   const [modalSubirAbierto, setModalSubirAbierto] = useState(false);
-  const [archivoAEliminar, setArchivoAEliminar] = useState<Archivo | null>(null);
-  const [eliminando, setEliminando] = useState(false);
 
   // Tomar los últimos 4 archivos recientes
   const archivosRecientes = archivos.slice(0, 4);
 
-  const handleConfirmarEliminacion = async () => {
-    if (!archivoAEliminar) return;
-    setEliminando(true);
-    await eliminarArchivo(archivoAEliminar.id);
-    setEliminando(false);
-    setArchivoAEliminar(null);
+  const handleDescargar = async (archivo: Archivo) => {
+    mostrarToastInfo(`Descargando ${archivo.nombre_archivo}...`);
+    await descargarArchivo(archivo);
+  };
+
+  const handleEliminar = async (archivo: Archivo) => {
+    const confirmado = await confirmarEliminacionArchivo(archivo.nombre_archivo);
+    if (confirmado) {
+      const res = await eliminarArchivo(archivo.id);
+      if (res.exito) {
+        mostrarToastExito('Archivo eliminado correctamente');
+      } else {
+        mostrarToastError(res.error || 'No se pudo eliminar el archivo');
+      }
+    }
   };
 
   return (
@@ -188,14 +200,14 @@ export const Inicio: React.FC = () => {
 
                   <div className="flex items-center gap-1 shrink-0">
                     <button
-                      onClick={() => descargarArchivo(archivo)}
+                      onClick={() => handleDescargar(archivo)}
                       className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors cursor-pointer"
                       title="Descargar archivo"
                     >
                       <Download className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => setArchivoAEliminar(archivo)}
+                      onClick={() => handleEliminar(archivo)}
                       className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                       title="Eliminar archivo"
                     >
@@ -213,14 +225,6 @@ export const Inicio: React.FC = () => {
       <ModalSubirArchivo
         abierto={modalSubirAbierto}
         alCerrar={() => setModalSubirAbierto(false)}
-      />
-
-      {/* Modal de confirmación para eliminar */}
-      <ModalEliminarArchivo
-        archivo={archivoAEliminar}
-        alCerrar={() => setArchivoAEliminar(null)}
-        alConfirmar={handleConfirmarEliminacion}
-        eliminando={eliminando}
       />
     </div>
   );

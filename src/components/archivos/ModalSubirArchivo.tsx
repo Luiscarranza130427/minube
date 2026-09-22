@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 import { ProgressBar } from '../ui/ProgressBar';
 import { formatearTamano } from '../../utils/formatters';
 import { useArchivos } from '../../hooks/useArchivos';
+import { mostrarToastExito, mostrarToastError } from '../../utils/alertas';
 
 interface ModalSubirArchivoProps {
   abierto: boolean;
@@ -39,6 +40,7 @@ export const ModalSubirArchivo: React.FC<ModalSubirArchivoProps> = ({ abierto, a
     const LIMITE_BYTES = 50 * 1024 * 1024;
     if (archivo.size > LIMITE_BYTES) {
       setErrorLocal('El archivo supera el tamaño máximo permitido de 50 MB.');
+      mostrarToastError('El archivo supera el tamaño máximo de 50 MB.');
       return;
     }
     setErrorLocal(null);
@@ -77,6 +79,7 @@ export const ModalSubirArchivo: React.FC<ModalSubirArchivoProps> = ({ abierto, a
     e.preventDefault();
     if (!archivoSeleccionado) {
       setErrorLocal('Por favor selecciona un archivo antes de continuar.');
+      mostrarToastError('Por favor selecciona un archivo antes de continuar.');
       return;
     }
 
@@ -85,11 +88,13 @@ export const ModalSubirArchivo: React.FC<ModalSubirArchivoProps> = ({ abierto, a
 
     if (resultado.exito) {
       setMensajeExito('¡Archivo subido exitosamente a la nube!');
+      mostrarToastExito('¡Archivo subido exitosamente a Nubox!');
       setTimeout(() => {
         manejarCierre();
-      }, 1200);
+      }, 900);
     } else {
       setErrorLocal(resultado.error || 'Error al subir el archivo');
+      mostrarToastError(resultado.error || 'Error al subir el archivo');
     }
   };
 
