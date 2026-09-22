@@ -82,9 +82,14 @@ export const ArchivosProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setProgresoSubida(10);
 
     const timestamp = Date.now();
-    const extension = '.' + archivoFisico.name.split('.').pop()?.toLowerCase() || '';
-    const nombreLimpio = archivoFisico.name.replace(/\s+/g, '_');
-    const nombreAlmacenamiento = `${usuario.id}/${timestamp}_${nombreLimpio}`;
+    const extension = '.' + (archivoFisico.name.split('.').pop()?.toLowerCase() || '');
+    const puntoIndex = archivoFisico.name.lastIndexOf('.');
+    const nombreSinExt = puntoIndex !== -1 ? archivoFisico.name.substring(0, puntoIndex) : archivoFisico.name;
+    const nombreSanitizado = nombreSinExt
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9_-]/g, '_');
+    const nombreAlmacenamiento = `${usuario.id}/${timestamp}_${nombreSanitizado}${extension}`;
     const rutaAlmacenamiento = `${BUCKET_ARCHIVOS}/${nombreAlmacenamiento}`;
 
     try {
@@ -218,14 +223,12 @@ export const ArchivosProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const descargarArchivo = async (archivo: Archivo): Promise<void> => {
     try {
       if (estaConfiguradoSupabase) {
-        // Obtener URL de descarga desde Supabase Storage
+        // 1. Intentar descarga directa desde Supabase Storage
         const { data, error } = await supabase.storage
           .from(BUCKET_ARCHIVOS)
           .download(archivo.nombre_almacenamiento);
 
-        if (error) throw error;
-
-        if (data) {
+        if (!error && data) {
           const url = URL.createObjectURL(data);
           const enlace = document.createElement('a');
           enlace.href = url;
@@ -234,6 +237,23 @@ export const ArchivosProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           enlace.click();
           document.body.removeChild(enlace);
           URL.revokeObjectURL(url);
+          return;
+        }
+
+        // 2. Fallback: URL pública
+        const { data: publicData } = supabase.storage
+          .from(BUCKET_ARCHIVOS)
+          .getPublicUrl(archivo.nombre_almacenamiento);
+
+        if (publicData?.publicUrl) {
+          const enlace = document.createElement('a');
+          enlace.href = publicData.publicUrl;
+          enlace.download = archivo.nombre_archivo;
+          enlace.target = '_blank';
+          document.body.appendChild(enlace);
+          enlace.click();
+          document.body.removeChild(enlace);
+          return;
         }
       } else {
         // Descarga simulada en modo demo generando un archivo de texto descriptivo

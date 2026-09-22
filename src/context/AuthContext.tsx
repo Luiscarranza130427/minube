@@ -81,6 +81,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           if (perfilData) {
             setUsuario(perfilData as Perfil);
+          } else {
+            const ahora = new Date().toISOString();
+            const fallbackPerfil: Perfil = {
+              id: session.user.id,
+              nombre_completo: session.user.user_metadata?.nombre_completo || session.user.email?.split('@')[0] || 'Usuario',
+              correo: session.user.email || '',
+              fecha_registro: session.user.created_at || ahora,
+              fecha_actualizacion: ahora,
+            };
+            setUsuario(fallbackPerfil);
           }
         } else if (event === 'SIGNED_OUT') {
           setUsuario(null);
@@ -112,7 +122,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             .eq('id', data.user.id)
             .single();
 
-          if (perfil) setUsuario(perfil as Perfil);
+          if (perfil) {
+            setUsuario(perfil as Perfil);
+          } else {
+            const ahora = new Date().toISOString();
+            const nuevoPerfil: Perfil = {
+              id: data.user.id,
+              nombre_completo: data.user.user_metadata?.nombre_completo || data.user.email?.split('@')[0] || 'Usuario',
+              correo: data.user.email || '',
+              fecha_registro: data.user.created_at || ahora,
+              fecha_actualizacion: ahora,
+            };
+            await supabase.from('perfiles').upsert(nuevoPerfil);
+            setUsuario(nuevoPerfil);
+          }
         }
         return { exito: true };
       } else {
