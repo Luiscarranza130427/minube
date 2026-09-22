@@ -2,23 +2,22 @@ import Swal from 'sweetalert2';
 import logoNubox from '../assets/nubox-logo.png';
 
 /**
- * Toast base de SweetAlert2 con diseño ultra-moderno Nubox
- * Centrado en la parte superior, flotante y SIN fondo oscuro
+ * Toast flotante minimalista estilo píldora moderna (Apple / Linear)
+ * Centrado arriba, limpio, elegante y SIN fondo oscuro ni barras molestas
  */
 export const Toast = Swal.mixin({
   toast: true,
   position: 'top',
   showConfirmButton: false,
   showCancelButton: false,
-  timer: 3500,
-  timerProgressBar: true,
-  backdrop: false, // NUNCA mostrar sombra oscura en el fondo de la pantalla
+  timer: 2800,
+  timerProgressBar: false, // Sin barra de carga para máxima limpieza visual
+  backdrop: false, // Cero sombra oscura en la pantalla
   background: '#ffffff',
   color: '#0f172a',
   customClass: {
-    popup: 'swal2-toast-nubox',
-    container: 'swal2-toast-container-nubox',
-    timerProgressBar: 'swal2-toast-progress-nubox',
+    popup: 'swal2-pill-toast',
+    container: 'swal2-pill-container',
   },
   didOpen: (toast) => {
     toast.onmouseenter = Swal.stopTimer;
@@ -27,132 +26,116 @@ export const Toast = Swal.mixin({
 });
 
 /**
- * Genera el HTML enriquecido para un Toast con el logotipo oficial de Nubox
+ * Genera el HTML minimalista de una sola línea tipo píldora
  */
-const generarHtmlToast = (
+const generarPillToast = (
   mensaje: string,
-  tipo: 'exito' | 'error' | 'info' | 'advertencia',
-  subtitulo: string = 'Nubox Cloud'
+  tipo: 'exito' | 'error' | 'info' | 'advertencia'
 ) => {
-  const configTipo = {
+  const iconConfig = {
     exito: {
-      colorBadge: '#10b981',
-      iconoSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
-      fondoBadge: '#ecfdf5',
-      bordeBadge: '#a7f3d0',
-      label: 'ÉXITO',
+      color: '#10b981',
+      bg: '#ecfdf5',
+      border: '#a7f3d0',
+      svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
     },
     error: {
-      colorBadge: '#f43f5e',
-      iconoSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`,
-      fondoBadge: '#fff1f2',
-      bordeBadge: '#fecdd3',
-      label: 'ERROR',
+      color: '#f43f5e',
+      bg: '#fff1f2',
+      border: '#fecdd3',
+      svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
     },
     info: {
-      colorBadge: '#0ea5e9',
-      iconoSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`,
-      fondoBadge: '#f0f9ff',
-      bordeBadge: '#bae6fd',
-      label: 'INFORMACIÓN',
+      color: '#0ea5e9',
+      bg: '#f0f9ff',
+      border: '#bae6fd',
+      svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`,
     },
     advertencia: {
-      colorBadge: '#f59e0b',
-      iconoSvg: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
-      fondoBadge: '#fffbeb',
-      bordeBadge: '#fde68a',
-      label: 'AVISO',
+      color: '#f59e0b',
+      bg: '#fffbeb',
+      border: '#fde68a',
+      svg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
     },
   }[tipo];
 
   return `
-    <div class="swal-custom-toast-inner">
-      <div class="swal-custom-toast-avatar">
-        <img src="${logoNubox}" alt="Nubox" class="swal-custom-toast-logo" />
-        <span class="swal-custom-toast-dot" style="background-color: ${configTipo.colorBadge};"></span>
-      </div>
-      <div class="swal-custom-toast-content">
-        <div class="swal-custom-toast-header">
-          <span class="swal-custom-toast-brand">${subtitulo}</span>
-          <span class="swal-custom-toast-badge" style="color: ${configTipo.colorBadge}; background-color: ${configTipo.fondoBadge}; border-color: ${configTipo.bordeBadge};">
-            ${configTipo.iconoSvg}
-            <span>${configTipo.label}</span>
-          </span>
-        </div>
-        <div class="swal-custom-toast-message">${mensaje}</div>
-      </div>
+    <div class="swal-pill-wrapper">
+      <img src="${logoNubox}" alt="Nubox" class="swal-pill-logo-img" />
+      <span class="swal-pill-sep"></span>
+      <span class="swal-pill-text">${mensaje}</span>
+      <span class="swal-pill-icon-box" style="background-color: ${iconConfig.bg}; border: 1px solid ${iconConfig.border};">
+        ${iconConfig.svg}
+      </span>
     </div>
   `;
 };
 
 /**
- * Notificación Toast de ÉXITO personalizada con logo
+ * Notificación Toast de ÉXITO
  */
-export const mostrarToastExito = (mensaje: string, subtitulo?: string) => {
+export const mostrarToastExito = (mensaje: string) => {
   return Toast.fire({
-    html: generarHtmlToast(mensaje, 'exito', subtitulo),
+    html: generarPillToast(mensaje, 'exito'),
   });
 };
 
 /**
- * Notificación Toast de ERROR personalizada con logo
+ * Notificación Toast de ERROR
  */
-export const mostrarToastError = (mensaje: string, subtitulo?: string) => {
+export const mostrarToastError = (mensaje: string) => {
   return Toast.fire({
-    html: generarHtmlToast(mensaje, 'error', subtitulo),
+    html: generarPillToast(mensaje, 'error'),
   });
 };
 
 /**
- * Notificación Toast de INFORMACIÓN personalizada con logo
+ * Notificación Toast de INFORMACIÓN
  */
-export const mostrarToastInfo = (mensaje: string, subtitulo?: string) => {
+export const mostrarToastInfo = (mensaje: string) => {
   return Toast.fire({
-    html: generarHtmlToast(mensaje, 'info', subtitulo),
+    html: generarPillToast(mensaje, 'info'),
   });
 };
 
 /**
- * Notificación Toast de ADVERTENCIA personalizada con logo
+ * Notificación Toast de ADVERTENCIA
  */
-export const mostrarToastAdvertencia = (mensaje: string, subtitulo?: string) => {
+export const mostrarToastAdvertencia = (mensaje: string) => {
   return Toast.fire({
-    html: generarHtmlToast(mensaje, 'advertencia', subtitulo),
+    html: generarPillToast(mensaje, 'advertencia'),
   });
 };
 
 /**
- * Modal estilizado de confirmación para eliminar archivos (con logo oficial)
+ * Modal centrado estilo SweetAlert clásico para confirmación de eliminación
  */
 export const confirmarEliminacionArchivo = async (nombreArchivo: string): Promise<boolean> => {
   const resultado = await Swal.fire({
+    imageUrl: logoNubox,
+    imageWidth: 64,
+    imageHeight: 64,
+    imageAlt: 'Nubox',
+    title: '¿Eliminar archivo?',
     html: `
-      <div class="swal-custom-modal-wrap">
-        <div class="swal-custom-modal-logo-container">
-          <div class="swal-custom-modal-logo-badge">
-            <img src="${logoNubox}" alt="Nubox Cloud" class="swal-custom-modal-logo-img" />
-          </div>
-        </div>
-        <h3 class="swal-custom-modal-title">¿Eliminar archivo?</h3>
-        <p class="swal-custom-modal-subtitle">
-          Esta acción no se puede deshacer. El archivo se eliminará de forma permanente de tu nube:
-        </p>
-        <div class="swal-custom-modal-filebox">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-          <span class="swal-custom-modal-filename">${nombreArchivo}</span>
-        </div>
+      <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 0.75rem;">
+        Esta acción no se puede deshacer. Se eliminará permanentemente de tu nube:
+      </p>
+      <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 0.625rem 0.875rem; font-weight: 600; color: #1e293b; font-size: 0.8125rem; word-break: break-all;">
+        ${nombreArchivo}
       </div>
     `,
     showCancelButton: true,
-    confirmButtonText: 'Sí, eliminar archivo',
+    confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'Cancelar',
     reverseButtons: true,
     buttonsStyling: false,
     customClass: {
-      popup: 'swal2-modal-nubox',
-      confirmButton: 'swal2-btn-modal-danger',
-      cancelButton: 'swal2-btn-modal-cancel',
-      actions: 'swal2-actions-modal-nubox',
+      popup: 'swal-classic-modal',
+      title: 'swal-classic-title',
+      confirmButton: 'swal-classic-btn-danger',
+      cancelButton: 'swal-classic-btn-cancel',
+      actions: 'swal-classic-actions',
     },
   });
 
@@ -160,33 +143,27 @@ export const confirmarEliminacionArchivo = async (nombreArchivo: string): Promis
 };
 
 /**
- * Modal de confirmación para cerrar sesión (con logo oficial)
+ * Modal centrado para confirmar cerrar sesión
  */
 export const confirmarCerrarSesion = async (): Promise<boolean> => {
   const resultado = await Swal.fire({
-    html: `
-      <div class="swal-custom-modal-wrap">
-        <div class="swal-custom-modal-logo-container">
-          <div class="swal-custom-modal-logo-badge">
-            <img src="${logoNubox}" alt="Nubox Cloud" class="swal-custom-modal-logo-img" />
-          </div>
-        </div>
-        <h3 class="swal-custom-modal-title">¿Cerrar sesión en Nubox?</h3>
-        <p class="swal-custom-modal-subtitle">
-          Tu sesión se cerrará de forma segura. Tendrás que iniciar sesión nuevamente para acceder a tus archivos.
-        </p>
-      </div>
-    `,
+    imageUrl: logoNubox,
+    imageWidth: 60,
+    imageHeight: 60,
+    imageAlt: 'Nubox',
+    title: '¿Cerrar sesión?',
+    text: 'Tu sesión se cerrará de forma segura en este navegador.',
     showCancelButton: true,
     confirmButtonText: 'Cerrar sesión',
-    cancelButtonText: 'Permanecer conectado',
+    cancelButtonText: 'Cancelar',
     reverseButtons: true,
     buttonsStyling: false,
     customClass: {
-      popup: 'swal2-modal-nubox',
-      confirmButton: 'swal2-btn-modal-danger',
-      cancelButton: 'swal2-btn-modal-cancel',
-      actions: 'swal2-actions-modal-nubox',
+      popup: 'swal-classic-modal',
+      title: 'swal-classic-title',
+      confirmButton: 'swal-classic-btn-danger',
+      cancelButton: 'swal-classic-btn-cancel',
+      actions: 'swal-classic-actions',
     },
   });
 
@@ -194,53 +171,42 @@ export const confirmarCerrarSesion = async (): Promise<boolean> => {
 };
 
 /**
- * Modal estilizado de éxito con logotipo
+ * Modal centrado clásico de éxito
  */
 export const mostrarModalExito = (titulo: string, mensaje: string) => {
   return Swal.fire({
-    html: `
-      <div class="swal-custom-modal-wrap">
-        <div class="swal-custom-modal-logo-container">
-          <div class="swal-custom-modal-logo-badge">
-            <img src="${logoNubox}" alt="Nubox Cloud" class="swal-custom-modal-logo-img" />
-          </div>
-        </div>
-        <h3 class="swal-custom-modal-title">${titulo}</h3>
-        <p class="swal-custom-modal-subtitle">${mensaje}</p>
-      </div>
-    `,
+    imageUrl: logoNubox,
+    imageWidth: 64,
+    imageHeight: 64,
+    imageAlt: 'Nubox',
+    title: titulo,
+    text: mensaje,
     confirmButtonText: 'Entendido',
     buttonsStyling: false,
     customClass: {
-      popup: 'swal2-modal-nubox',
-      confirmButton: 'swal2-btn-modal-primary',
-      actions: 'swal2-actions-modal-nubox',
+      popup: 'swal-classic-modal',
+      title: 'swal-classic-title',
+      confirmButton: 'swal-classic-btn-primary',
+      actions: 'swal-classic-actions',
     },
   });
 };
 
 /**
- * Modal estilizado de error con logotipo
+ * Modal centrado clásico de error
  */
 export const mostrarModalError = (titulo: string, mensaje: string) => {
   return Swal.fire({
-    html: `
-      <div class="swal-custom-modal-wrap">
-        <div class="swal-custom-modal-logo-container">
-          <div class="swal-custom-modal-logo-badge error-badge">
-            <img src="${logoNubox}" alt="Nubox Cloud" class="swal-custom-modal-logo-img" />
-          </div>
-        </div>
-        <h3 class="swal-custom-modal-title" style="color: #e11d48;">${titulo}</h3>
-        <p class="swal-custom-modal-subtitle">${mensaje}</p>
-      </div>
-    `,
+    icon: 'error',
+    title: titulo,
+    text: mensaje,
     confirmButtonText: 'Aceptar',
     buttonsStyling: false,
     customClass: {
-      popup: 'swal2-modal-nubox',
-      confirmButton: 'swal2-btn-modal-primary',
-      actions: 'swal2-actions-modal-nubox',
+      popup: 'swal-classic-modal',
+      title: 'swal-classic-title',
+      confirmButton: 'swal-classic-btn-primary',
+      actions: 'swal-classic-actions',
     },
   });
 };
