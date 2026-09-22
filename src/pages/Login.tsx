@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { Alerta } from '../components/ui/Alerta';
+import { mostrarToastExito, mostrarToastError, mostrarToastAdvertencia } from '../utils/alertas';
 
 export const Login: React.FC = () => {
   const { iniciarSesion } = useAuth();
@@ -40,16 +41,24 @@ export const Login: React.FC = () => {
     e.preventDefault();
     setErrorGeneral(null);
 
-    if (!validarFormulario()) return;
+    if (!validarFormulario()) {
+      mostrarToastAdvertencia('Por favor completa los datos requeridos');
+      return;
+    }
 
     setCargando(true);
     const res = await iniciarSesion(correo, contrasena);
     setCargando(false);
 
     if (res.exito) {
-      navigate('/inicio');
+      mostrarToastExito('¡Bienvenido a Nubox! Iniciando sesión...');
+      setTimeout(() => {
+        navigate('/inicio');
+      }, 500);
     } else {
-      setErrorGeneral(res.error || 'Credenciales inválidas. Por favor intenta de nuevo.');
+      const mensajeError = res.error || 'Credenciales inválidas. Por favor intenta de nuevo.';
+      setErrorGeneral(mensajeError);
+      mostrarToastError(mensajeError);
     }
   };
 

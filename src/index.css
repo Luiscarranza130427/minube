@@ -16,74 +16,275 @@
 }
 
 /* ==========================================================================
-   Personalización Ultra-Moderna para SweetAlert2 (Nubox Theme)
+   Personalización Ultra-Moderna para SweetAlert2 (Nubox Design System)
    ========================================================================== */
 
+/* Fondo oscuro con desenfoque de cristal (Backdrop) */
 .swal2-container.swal2-backdrop-show {
-  backdrop-filter: blur(6px) !important;
-  background: rgba(15, 23, 42, 0.4) !important;
+  backdrop-filter: blur(8px) !important;
+  background: rgba(15, 23, 42, 0.38) !important;
 }
 
-.swal2-popup.swal2-popup-nubox {
-  border-radius: 1.5rem !important;
-  padding: 1.75rem !important;
+/* --- TOASTS FLOTANTES NUBOX --- */
+.swal2-container.swal2-top-end {
+  top: 16px !important;
+  right: 16px !important;
+  padding: 0 !important;
+}
+
+.swal2-popup.swal2-toast.swal2-toast-nubox {
+  border-radius: 1.125rem !important;
+  padding: 0.75rem 0.9rem !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.12), 0 6px 14px -3px rgba(14, 165, 233, 0.08) !important;
+  font-family: inherit !important;
+  max-width: 360px !important;
+  width: auto !important;
+  min-width: 290px !important;
+  overflow: hidden !important;
+}
+
+/* Ocultar iconos nativos de Swal en toasts para usar nuestro layout de logo */
+.swal2-toast.swal2-toast-nubox .swal2-icon {
+  display: none !important;
+}
+
+.swal2-toast.swal2-toast-nubox .swal2-html-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  text-align: left !important;
+}
+
+/* Barra de progreso súper fina y elegante */
+.swal2-timer-progress-bar.swal2-toast-progress-nubox {
+  height: 2.5px !important;
+  background: linear-gradient(90deg, #38bdf8, #0ea5e9, #0284c7) !important;
+}
+
+/* Layout interno del toast personalizado */
+.swal-custom-toast-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.swal-custom-toast-avatar {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 0.875rem;
+  border: 1px solid #bae6fd;
+}
+
+.swal-custom-toast-logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(14, 165, 233, 0.2));
+}
+
+.swal-custom-toast-dot {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  border: 2px solid #ffffff;
+}
+
+.swal-custom-toast-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.swal-custom-toast-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.swal-custom-toast-brand {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #0284c7;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.swal-custom-toast-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-style: solid;
+  line-height: 1;
+}
+
+.swal-custom-toast-message {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* --- MODALES NUBOX --- */
+.swal2-popup.swal2-modal-nubox {
+  border-radius: 1.75rem !important;
+  padding: 2rem 1.75rem !important;
   border: 1px solid #f1f5f9 !important;
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.18) !important;
+  background: #ffffff !important;
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.2) !important;
+  width: 92% !important;
+  max-width: 440px !important;
   font-family: inherit !important;
 }
 
-.swal2-title.swal2-title-nubox {
-  font-size: 1.25rem !important;
-  font-weight: 800 !important;
-  color: #0f172a !important;
-  letter-spacing: -0.025em !important;
-  padding-top: 0.5rem !important;
+.swal2-modal-nubox .swal2-html-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
 }
 
-.swal2-actions-nubox {
-  gap: 0.625rem !important;
+.swal-custom-modal-wrap {
+  text-align: center;
+}
+
+.swal-custom-modal-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.swal-custom-modal-logo-badge {
+  width: 72px;
+  height: 72px;
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px -4px rgba(14, 165, 233, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.swal-custom-modal-logo-badge.error-badge {
+  background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+  border: 1px solid #fecdd3;
+  box-shadow: 0 10px 25px -4px rgba(244, 63, 94, 0.2);
+}
+
+.swal-custom-modal-logo-badge:hover {
+  transform: scale(1.05);
+}
+
+.swal-custom-modal-logo-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(14, 165, 233, 0.25));
+}
+
+.swal-custom-modal-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.025em;
+}
+
+.swal-custom-modal-subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.swal-custom-modal-filebox {
+  margin-top: 1.125rem;
+  padding: 0.75rem 1rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  text-align: left;
+}
+
+.swal-custom-modal-filename {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1e293b;
+  word-break: break-all;
+}
+
+/* Botones de modales */
+.swal2-actions-modal-nubox {
+  display: flex !important;
+  gap: 0.75rem !important;
+  justify-content: center !important;
   margin-top: 1.5rem !important;
   width: 100% !important;
-  justify-content: flex-end !important;
 }
 
-.swal2-btn-primary {
-  background-color: #0ea5e9 !important;
+.swal2-btn-modal-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
   color: #ffffff !important;
   font-weight: 600 !important;
   font-size: 0.875rem !important;
-  padding: 0.625rem 1.25rem !important;
+  padding: 0.625rem 1.35rem !important;
   border-radius: 0.75rem !important;
   border: none !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
-  box-shadow: 0 1px 3px 0 rgba(14, 165, 233, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.35) !important;
 }
 
-.swal2-btn-primary:hover {
-  background-color: #0284c7 !important;
+.swal2-btn-modal-primary:hover {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
   transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4) !important;
 }
 
-.swal2-btn-danger {
-  background-color: #f43f5e !important;
+.swal2-btn-modal-danger {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
   color: #ffffff !important;
   font-weight: 600 !important;
   font-size: 0.875rem !important;
-  padding: 0.625rem 1.25rem !important;
+  padding: 0.625rem 1.35rem !important;
   border-radius: 0.75rem !important;
   border: none !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
-  box-shadow: 0 1px 3px 0 rgba(244, 63, 94, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.35) !important;
 }
 
-.swal2-btn-danger:hover {
-  background-color: #e11d48 !important;
+.swal2-btn-modal-danger:hover {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
   transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.4) !important;
 }
 
-.swal2-btn-cancel {
+.swal2-btn-modal-cancel {
   background-color: #f1f5f9 !important;
   color: #475569 !important;
   font-weight: 600 !important;
@@ -95,25 +296,7 @@
   transition: all 0.2s ease !important;
 }
 
-.swal2-btn-cancel:hover {
+.swal2-btn-modal-cancel:hover {
   background-color: #e2e8f0 !important;
   color: #0f172a !important;
-}
-
-/* Estilos de Toast flotante en esquina superior */
-.swal2-toast.swal2-toast-nubox {
-  border-radius: 1rem !important;
-  border: 1px solid #f1f5f9 !important;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1) !important;
-  padding: 0.875rem 1.25rem !important;
-}
-
-.swal2-toast .swal2-title {
-  font-size: 0.875rem !important;
-  font-weight: 600 !important;
-  color: #1e293b !important;
-}
-
-.swal2-toast-progress {
-  background-color: #0ea5e9 !important;
 }

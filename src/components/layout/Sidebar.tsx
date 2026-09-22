@@ -12,6 +12,7 @@ import {
 import { useAuth } from '../../hooks/useAuth';
 import { useArchivos } from '../../hooks/useArchivos';
 import { formatearTamano } from '../../utils/formatters';
+import { confirmarCerrarSesion, mostrarToastInfo } from '../../utils/alertas';
 
 interface SidebarProps {
   abiertoMovil: boolean;
@@ -42,8 +43,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ abiertoMovil, alCerrarMovil })
   ];
 
   const handleCerrarSesion = async () => {
-    await cerrarSesion();
-    navigate('/login');
+    const confirmado = await confirmarCerrarSesion();
+    if (confirmado) {
+      await cerrarSesion();
+      mostrarToastInfo('Has cerrado sesión correctamente');
+      navigate('/login');
+    }
   };
 
   const contenidoSidebar = (
