@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
+import { Mail, Lock, ArrowRight } from 'lucide-react';
 import logoNubox from '../assets/nubox-logo.png';
 import { useAuth } from '../hooks/useAuth';
 import { Input } from '../components/ui/Input';
@@ -8,11 +8,11 @@ import { Button } from '../components/ui/Button';
 import { Alerta } from '../components/ui/Alerta';
 
 export const Login: React.FC = () => {
-  const { iniciarSesion, modoDemostracion } = useAuth();
+  const { iniciarSesion } = useAuth();
   const navigate = useNavigate();
 
-  const [correo, setCorreo] = useState('carlos.arratia@ejemplo.edu.pe');
-  const [contrasena, setContrasena] = useState('123456');
+  const [correo, setCorreo] = useState('');
+  const [contrasena, setContrasena] = useState('');
   const [cargando, setCargando] = useState(false);
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
   const [erroresCampos, setErroresCampos] = useState<{ correo?: string; contrasena?: string }>({});
@@ -58,7 +58,7 @@ export const Login: React.FC = () => {
       {/* Contenedor central */}
       <div className="w-full max-w-md bg-white rounded-3xl border border-slate-200/80 shadow-xl shadow-slate-200/50 p-6 sm:p-8 space-y-6">
         {/* Cabecera / Identidad visual con Logo */}
-        <div className="text-center space-y-3 pb-1">
+        <div className="text-center space-y-2 pb-1">
           <div className="flex items-center justify-center">
             <img
               src={logoNubox}
@@ -67,10 +67,10 @@ export const Login: React.FC = () => {
             />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">
-              Nubox
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+              Iniciar sesión en Nubox
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Accede a tus archivos almacenados en la nube
             </p>
           </div>
@@ -127,16 +127,6 @@ export const Login: React.FC = () => {
             Iniciar sesión
           </Button>
         </form>
-
-        {/* Información académica de ayuda */}
-        {modoDemostracion && (
-          <div className="p-3 bg-sky-50/70 border border-sky-100 rounded-xl text-xs text-sky-800 flex items-start gap-2">
-            <Sparkles className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-semibold">Modo Académico:</span> Puedes iniciar sesión directamente con los datos precargados para explorar todas las vistas y funciones.
-            </div>
-          </div>
-        )}
 
         {/* Nota de sistema privado */}
         <div className="pt-2 text-center text-xs text-slate-400 border-t border-slate-100">
