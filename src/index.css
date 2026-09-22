@@ -19,49 +19,59 @@
    Personalización Ultra-Moderna para SweetAlert2 (Nubox Design System)
    ========================================================================== */
 
-/* Fondo oscuro con desenfoque de cristal SOLO para modales de confirmación (NUNCA para toasts) */
-.swal2-container:not(.swal2-toast-shown).swal2-backdrop-show {
-  backdrop-filter: blur(6px) !important;
-  -webkit-backdrop-filter: blur(6px) !important;
-  background: rgba(15, 23, 42, 0.38) !important;
-}
-
-/* ELIMINAR COMPLETAMENTE CUALQUIER FONDO O SOMBRA NEGRA EN TOASTS */
+/* RESET ABSOLUTO: Ningún toast puede tener fondo oscuro jamás */
+body.swal2-toast-shown,
+body.swal2-toast-shown .swal2-container,
+body.swal2-toast-shown .swal2-container.swal2-backdrop-show,
 .swal2-container.swal2-toast-shown,
 .swal2-container.swal2-toast-shown.swal2-backdrop-show {
   background: transparent !important;
+  background-color: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   box-shadow: none !important;
   pointer-events: none !important;
 }
 
-/* --- TOASTS FLOTANTES NUBOX: CENTRADOS ARRIBA SIN ESTORBAR --- */
-.swal2-container.swal2-top,
+/* Solo los modales de diálogo de confirmación tienen oscurecimiento suave de fondo */
+body:not(.swal2-toast-shown) .swal2-container.swal2-backdrop-show {
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  background: rgba(15, 23, 42, 0.4) !important;
+}
+
+/* Posición CENTRADA en la parte superior (estilo Dynamic Island / Floating pill) */
+body.swal2-toast-shown .swal2-container.swal2-top,
 .swal2-container.swal2-toast-container-nubox {
-  top: 16px !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
+  position: fixed !important;
+  top: 18px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: auto !important;
+  max-width: 92vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
   display: flex !important;
   justify-content: center !important;
-  align-items: flex-start !important;
+  align-items: center !important;
   background: transparent !important;
   pointer-events: none !important;
-  padding: 0 !important;
+  z-index: 99999 !important;
 }
 
 .swal2-popup.swal2-toast.swal2-toast-nubox {
   pointer-events: auto !important;
-  border-radius: 1.25rem !important;
-  padding: 0.7rem 1.1rem !important;
-  background: rgba(255, 255, 255, 0.98) !important;
+  border-radius: 9999px !important;
+  padding: 0.6rem 1.25rem !important;
+  background: #ffffff !important;
   border: 1px solid rgba(226, 232, 240, 0.95) !important;
-  box-shadow: 0 20px 35px -8px rgba(15, 23, 42, 0.12), 0 6px 16px -3px rgba(14, 165, 233, 0.08) !important;
+  box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(14, 165, 233, 0.08) !important;
   font-family: inherit !important;
-  max-width: 440px !important;
+  max-width: 480px !important;
   width: auto !important;
-  min-width: 310px !important;
+  min-width: 300px !important;
   margin: 0 auto !important;
   overflow: hidden !important;
 }
