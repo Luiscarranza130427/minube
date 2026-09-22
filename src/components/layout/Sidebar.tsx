@@ -48,19 +48,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ abiertoMovil, alCerrarMovil })
 
   const contenidoSidebar = (
     <div className="flex flex-col h-full bg-white border-r border-slate-200/80 w-64 select-none">
-      {/* Logotipo y Título de Nubox */}
-      <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+      {/* Logotipo de Nubox */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
         <div className="flex items-center gap-3">
           <img
             src={logoNubox}
             alt="Nubox"
-            className="w-10 h-10 object-contain drop-shadow-2xs"
+            className="w-10 h-10 object-contain drop-shadow-xs shrink-0"
           />
           <div>
-            <h1 className="font-bold text-slate-800 text-lg leading-tight tracking-tight">
+            <h1 className="font-extrabold text-slate-800 text-lg leading-tight tracking-tight">
               Nubox
             </h1>
-            <span className="text-[11px] font-medium text-sky-600 tracking-wide uppercase">
+            <span className="text-[11px] font-semibold text-sky-600 tracking-wide uppercase">
               Cloud Storage
             </span>
           </div>

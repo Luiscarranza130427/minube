@@ -57,22 +57,21 @@ export const Login: React.FC = () => {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 selection:bg-sky-500 selection:text-white">
       {/* Contenedor central */}
       <div className="w-full max-w-md bg-white rounded-3xl border border-slate-200/80 shadow-xl shadow-slate-200/50 p-6 sm:p-8 space-y-6">
-        {/* Cabecera / Identidad visual */}
-        <div className="text-center space-y-3">
+        {/* Cabecera / Identidad visual con Logo */}
+        <div className="text-center space-y-3 pb-1">
           <div className="flex items-center justify-center">
             <img
               src={logoNubox}
-              alt="Logo Nubox"
-              className="h-16 w-auto max-w-[200px] object-contain drop-shadow-sm"
+              alt="Nubox"
+              className="h-20 w-auto object-contain drop-shadow-md transition-transform hover:scale-105 duration-300"
             />
           </div>
-
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
-              Bienvenido a Nubox
+            <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">
+              Nubox
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Accede a tus archivos almacenados en la nube.
+            <p className="text-xs text-slate-400 mt-1">
+              Accede a tus archivos almacenados en la nube
             </p>
           </div>
         </div>
