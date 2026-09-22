@@ -97,22 +97,46 @@ export const ArchivosProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         // Simular progreso inicial
         setProgresoSubida(30);
 
-        // 1. Subir a Supabase Storage
-        const { error: storageError } = await supabase.storage
-          .from(BUCKET_ARCHIVOS)
-          .upload(nombreAlmacenamiento, archivoFisico, {
-            cacheControl: '3600',
-            upsert: false,
-          });
+        // 1. Subir a Supabase Storage (con upsert y reintento resiliente)
+        let intento = 0;
+        let storageError: { message?: string } | null = null;
+        let subidaOk = false;
+
+        while (intento < 2 && !subidaOk) {
+          intento++;
+          const { error } = await supabase.storage
+            .from(BUCKET_ARCHIVOS)
+            .upload(nombreAlmacenamiento, archivoFisico, {
+              cacheControl: '3600',
+              upsert: true,
+            });
+
+          if (!error) {
+            subidaOk = true;
+            storageError = null;
+          } else {
+            storageError = error;
+            if (error.message?.toLowerCase().includes('failed to fetch') && intento < 2) {
+              await new Promise((r) => setTimeout(r, 800));
+            } else {
+              break;
+            }
+          }
+        }
 
         if (storageError) {
-          const msg = storageError.message.toLowerCase();
+          const msg = storageError.message?.toLowerCase() || '';
           if (msg.includes('row-level security') || msg.includes('policy') || msg.includes('violates')) {
             throw new Error(
               'Permiso denegado por RLS en Supabase Storage (bucket "archivos-personales"). Ejecuta el script supabase_storage_policies.sql en tu SQL Editor de Supabase.'
             );
           }
-          throw new Error(`Error en Supabase Storage: ${storageError.message}`);
+          if (msg.includes('failed to fetch')) {
+            throw new Error(
+              'Error de red con Supabase (Failed to fetch). Comprueba tu conexión a internet y vuelve a intentar.'
+            );
+          }
+          throw new Error(`Error en Supabase Storage: ${storageError.message || 'Error desconocido'}`);
         }
 
         setProgresoSubida(75);

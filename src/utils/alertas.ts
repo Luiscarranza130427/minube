@@ -3,14 +3,16 @@ import logoNubox from '../assets/nubox-logo.png';
 
 /**
  * Toast base de SweetAlert2 con diseño ultra-moderno Nubox
+ * Centrado en la parte superior, flotante y SIN fondo oscuro
  */
 export const Toast = Swal.mixin({
   toast: true,
-  position: 'top-end',
+  position: 'top',
   showConfirmButton: false,
   showCancelButton: false,
   timer: 3500,
   timerProgressBar: true,
+  backdrop: false, // NUNCA mostrar sombra oscura en el fondo de la pantalla
   background: '#ffffff',
   color: '#0f172a',
   customClass: {
